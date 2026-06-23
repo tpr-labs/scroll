@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loading...</title>
     
-    <!-- Tailwind CSS (No build step required) -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- PrismJS for Beautiful Code Highlighting (CSS) -->
@@ -15,7 +15,6 @@
     <style>
         .fade-in { animation: fadeIn 0.4s ease-in forwards; opacity: 0; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        /* Hide scrollbar for tables but keep functionality */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -25,7 +24,7 @@
     <!-- Header area -->
     <header class="bg-white shadow-sm sticky top-0 z-10 transition-colors duration-300" id="site-header">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <h1 class="text-xl font-bold text-gray-900 truncate" id="site-title">Loading Page...</h1>
+            <h1 class="text-xl font-bold text-gray-900 truncate" id="site-title">Loading...</h1>
             <div id="loading-spinner" class="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900"></div>
         </div>
     </header>
@@ -38,7 +37,7 @@
     <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 mt-auto">
         <div class="max-w-4xl mx-auto px-4 py-6 text-center text-sm text-gray-500">
-            Powered by JSON & GitHub Pages
+            Powered by Paper.json
         </div>
     </footer>
 
@@ -47,42 +46,29 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
 
     <script>
         // ==========================================
         // 1. ROUTING & FILE DISCOVERY
         // ==========================================
         function getJsonFilename() {
-            // First check if user used a query parameter (e.g., ?page=train-schedule)
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('page')) return `${urlParams.get('page')}.json`;
 
-            // Next check if user used a hash route (e.g., #train-schedule)
             if (window.location.hash && window.location.hash.length > 1) {
                 return `${window.location.hash.substring(1)}.json`;
             }
 
-            // Finally, parse the actual URL Path (/repo-name/train-schedule)
             const path = window.location.pathname;
-            // Clean the path (remove trailing slash and index.html/404.html)
             const cleanPath = path.replace(/\/$/, '').replace(/\/(index|404)\.html$/, '');
             const segments = cleanPath.split('/').filter(Boolean);
 
-            if (window.location.hostname.includes('github.io')) {
-                // On GitHub Pages, segment[0] is usually the repo name. 
-                // So if we have more than 1 segment, the last one is the target page.
-                if (segments.length > 1) {
-                    return `${segments[segments.length - 1]}.json`;
-                }
-            } else {
-                // For custom domains, segment[0] is the page.
-                if (segments.length > 0) {
-                    return `${segments[segments.length - 1]}.json`;
-                }
+            if (window.location.hostname.includes('github.io') && segments.length > 1) {
+                return `${segments[segments.length - 1]}.json`;
+            } else if (!window.location.hostname.includes('github.io') && segments.length > 0) {
+                return `${segments[segments.length - 1]}.json`;
             }
 
-            // If we are at the root level, load data.json by default
             return 'data.json';
         }
 
@@ -103,7 +89,6 @@
             const container = document.getElementById('content-container');
             const spinner = document.getElementById('loading-spinner');
             
-            // Handle Page Meta Data
             if (data.pageMeta) {
                 if (data.pageMeta.title) {
                     document.title = data.pageMeta.title;
@@ -114,21 +99,18 @@
                 }
             }
 
-            // Process Blocks
             if (data.blocks && Array.isArray(data.blocks)) {
                 data.blocks.forEach((block, index) => {
                     let el = null;
                     
                     switch (block.type) {
                         case 'header':
-                            const hTags = { 1: 'h1', 2: 'h2', 3: 'h3', 4: 'h4', 5: 'h5', 6: 'h6' };
                             const hClasses = {
                                 1: 'text-3xl sm:text-4xl font-extrabold text-gray-900 mt-8 mb-4 tracking-tight',
                                 2: 'text-2xl sm:text-3xl font-bold text-gray-800 mt-8 mb-4 border-b pb-2',
-                                3: 'text-xl font-bold text-gray-800 mt-6 mb-3',
-                                4: 'text-lg font-semibold text-gray-800 mt-4 mb-2'
+                                3: 'text-xl font-bold text-gray-800 mt-6 mb-3'
                             };
-                            el = createElement(hTags[block.level] || 'h2', hClasses[block.level] || hClasses[2], block.text);
+                            el = createElement(block.level === 1 ? 'h1' : block.level === 2 ? 'h2' : 'h3', hClasses[block.level] || hClasses[2], block.text);
                             break;
 
                         case 'text':
@@ -145,19 +127,14 @@
                             img.onerror = () => { img.src = 'https://via.placeholder.com/800x400?text=Image+Not+Found'; };
                             imgContainer.appendChild(img);
                             el.appendChild(imgContainer);
-                            
-                            if (block.caption) {
-                                el.appendChild(createElement('figcaption', 'text-sm text-center text-gray-500 mt-3 italic', block.caption));
-                            }
+                            if (block.caption) el.appendChild(createElement('figcaption', 'text-sm text-center text-gray-500 mt-3 italic', block.caption));
                             break;
 
                         case 'link':
                             el = document.createElement('a');
-                            if (block.style === 'button') {
-                                el.className = 'inline-flex items-center justify-center bg-gray-900 hover:bg-gray-800 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 w-full sm:w-auto text-center';
-                            } else {
-                                el.className = 'text-blue-600 hover:text-blue-800 underline decoration-blue-300 underline-offset-4 transition-colors duration-200 font-medium';
-                            }
+                            el.className = block.style === 'button' 
+                                ? 'inline-flex items-center justify-center bg-gray-900 hover:bg-gray-800 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 shadow-sm w-full sm:w-auto text-center'
+                                : 'text-blue-600 hover:text-blue-800 underline decoration-blue-300 underline-offset-4 transition-colors duration-200 font-medium';
                             el.textContent = block.text;
                             el.href = block.url;
                             if (block.openInNewTab) el.target = '_blank';
@@ -165,16 +142,11 @@
 
                         case 'code':
                             el = createElement('div', 'rounded-xl overflow-hidden shadow-md my-6 bg-[#2d2d2d]');
-                            // Top bar for the code block
                             const topBar = createElement('div', 'flex items-center justify-between px-4 py-2 bg-[#1e1e1e] border-b border-gray-700');
-                            const langLabel = createElement('span', 'text-xs text-gray-400 font-mono uppercase tracking-wider', block.language);
-                            topBar.appendChild(langLabel);
+                            topBar.appendChild(createElement('span', 'text-xs text-gray-400 font-mono uppercase tracking-wider', block.language));
                             el.appendChild(topBar);
-
-                            // The code itself
                             const pre = createElement('pre', `language-${block.language} p-4 overflow-x-auto text-sm`);
                             const code = createElement('code', `language-${block.language}`);
-                            // Prevent HTML injection parsing
                             code.textContent = block.content;
                             pre.appendChild(code);
                             el.appendChild(pre);
@@ -183,21 +155,16 @@
                         case 'table':
                             el = createElement('div', 'overflow-x-auto no-scrollbar rounded-xl shadow-sm border border-gray-200 my-6');
                             const table = createElement('table', 'min-w-full divide-y divide-gray-200');
-                            
                             const thead = createElement('thead', 'bg-gray-50');
                             const headerRow = document.createElement('tr');
-                            block.headers.forEach(headerText => {
-                                headerRow.appendChild(createElement('th', 'px-6 py-3.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider', headerText));
-                            });
+                            block.headers.forEach(hText => headerRow.appendChild(createElement('th', 'px-6 py-3.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider', hText)));
                             thead.appendChild(headerRow);
                             table.appendChild(thead);
 
                             const tbody = createElement('tbody', 'bg-white divide-y divide-gray-200');
                             block.rows.forEach(row => {
                                 const tr = createElement('tr', 'hover:bg-blue-50/50 transition-colors');
-                                row.forEach(cellData => {
-                                    tr.appendChild(createElement('td', 'px-6 py-4 whitespace-nowrap text-sm text-gray-700', cellData));
-                                });
+                                row.forEach(cData => tr.appendChild(createElement('td', 'px-6 py-4 whitespace-nowrap text-sm text-gray-700', cData)));
                                 tbody.appendChild(tr);
                             });
                             table.appendChild(tbody);
@@ -213,54 +180,42 @@
                 });
             }
 
-            // Trigger PrismJS syntax highlighting
-            if (window.Prism) {
-                Prism.highlightAll();
-            }
-
+            if (window.Prism) Prism.highlightAll();
             spinner.style.display = 'none';
         }
 
         function renderError(filename) {
             const container = document.getElementById('content-container');
-            document.getElementById('site-title').textContent = "Page Not Found";
+            document.getElementById('site-title').textContent = "Error";
             container.innerHTML = `
                 <div class="text-center py-16 fade-in">
-                    <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
                     <h2 class="mt-4 text-2xl font-bold text-gray-900">Content Not Found</h2>
-                    <p class="mt-2 text-gray-500">We couldn't find the data file: <code class="bg-gray-100 px-2 py-1 rounded text-red-500 font-mono text-sm">${filename}</code></p>
-                    <a href="./" class="mt-6 inline-block text-blue-600 hover:text-blue-800 font-medium">← Return to home</a>
+                    <p class="mt-2 text-gray-500">Attempted to fetch: <code class="bg-gray-100 px-2 py-1 rounded text-red-500 font-mono text-sm">${filename}</code></p>
+                    <p class="mt-4 text-sm text-gray-400">If you are opening this locally (file://), fetch will fail due to browser security policies. You must run a local server or host on GitHub Pages.</p>
                 </div>
             `;
             document.getElementById('loading-spinner').style.display = 'none';
         }
 
         // ==========================================
-        // 4. INITIALIZATION
+        // 4. THE FETCH CALL (No mock data)
         // ==========================================
         async function init() {
             const targetFile = getJsonFilename();
-            console.log("Attempting to load:", targetFile);
-
             try {
-                // Fetch the JSON dynamically
+                // Strictly dynamic fetch. 
                 const response = await fetch(targetFile);
-                if (!response.ok) throw new Error('File not found');
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 
                 const data = await response.json();
                 renderPage(data);
-
             } catch (error) {
-                console.error("Error loading JSON:", error);
+                console.error("Fetch failed:", error);
                 renderError(targetFile);
             }
         }
 
-        // Boot up the engine when the browser is ready
         document.addEventListener('DOMContentLoaded', init);
-
     </script>
 </body>
 </html>
