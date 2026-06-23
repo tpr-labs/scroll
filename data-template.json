@@ -1,0 +1,75 @@
+{
+  "pageMeta": {
+    "title": "My GitHub Hosted Page",
+    "description": "A beautifully rendered single page driven by JSON",
+    "themeColor": "#2563eb"
+  },
+  "blocks": [
+    {
+      "type": "header",
+      "level": 1,
+      "text": "Welcome to the JSON Driven Page"
+    },
+    {
+      "type": "text",
+      "text": "This paragraph is rendered dynamically. You can add as many text blocks as you want. Below, you will see examples of the other components we support."
+    },
+    {
+      "type": "image",
+      "url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1000&q=80",
+      "alt": "Laptop displaying code",
+      "caption": "Code in action"
+    },
+    {
+      "type": "header",
+      "level": 2,
+      "text": "Code Example"
+    },
+    {
+      "type": "text",
+      "text": "Here is a python snippet demonstrating how to print a simple message."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "content": "def hello_world():\n    print('Hello from the JSON file!')\n\nhello_world()"
+    },
+    {
+      "type": "header",
+      "level": 2,
+      "text": "Links & Buttons"
+    },
+    {
+      "type": "text",
+      "text": "You can have inline links or prominent call-to-action buttons."
+    },
+    {
+      "type": "link",
+      "url": "https://github.com",
+      "text": "This is a standard text link",
+      "style": "text",
+      "openInNewTab": true
+    },
+    {
+      "type": "link",
+      "url": "https://github.com/your-repo",
+      "text": "View on GitHub",
+      "style": "button",
+      "openInNewTab": true
+    },
+    {
+      "type": "header",
+      "level": 2,
+      "text": "Tabular Data"
+    },
+    {
+      "type": "table",
+      "headers": ["Feature", "Supported", "Notes"],
+      "rows": [
+        ["Headers", "Yes", "H1 through H6"],
+        ["Images", "Yes", "Requires public URL"],
+        ["Code Snippets", "Yes", "Supports multiple languages"]
+      ]
+    }
+  ]
+}
