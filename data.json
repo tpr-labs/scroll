@@ -1,75 +1,71 @@
 {
   "pageMeta": {
-    "title": "My GitHub Hosted Page",
-    "description": "A beautifully rendered single page driven by JSON",
-    "themeColor": "#2563eb"
+    "title": "KSRTC Bus Schedule: Nandini Layout ⇄ Nagamangala",
+    "description": "Official bus timings for the Nandini Layout and Nagamangala route.",
+    "themeColor": "#dc2626"
   },
   "blocks": [
     {
       "type": "header",
       "level": 1,
-      "text": "Welcome to the JSON Driven Page"
+      "text": "KSRTC Travel Schedule"
     },
     {
       "type": "text",
-      "text": "This paragraph is rendered dynamically. You can add as many text blocks as you want. Below, you will see examples of the other components we support."
+      "text": "Karnataka State Road Transport Corporation (ಕರ್ನಾಟಕ ರಾಜ್ಯ ರಸ್ತೆ ಸಾರಿಗೆ ನಿಗಮ) official bus timings."
     },
     {
       "type": "image",
-      "url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1000&q=80",
-      "alt": "Laptop displaying code",
-      "caption": "Code in action"
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/KSRTC_Logo.svg/512px-KSRTC_Logo.svg.png",
+      "alt": "KSRTC Logo",
+      "caption": "Mandya Division"
     },
     {
       "type": "header",
       "level": 2,
-      "text": "Code Example"
+      "text": "From Nandini Layout to Nagamangala"
     },
     {
       "type": "text",
-      "text": "Here is a python snippet demonstrating how to print a simple message."
-    },
-    {
-      "type": "code",
-      "language": "python",
-      "content": "def hello_world():\n    print('Hello from the JSON file!')\n\nhello_world()"
-    },
-    {
-      "type": "header",
-      "level": 2,
-      "text": "Links & Buttons"
-    },
-    {
-      "type": "text",
-      "text": "You can have inline links or prominent call-to-action buttons."
-    },
-    {
-      "type": "link",
-      "url": "https://github.com",
-      "text": "This is a standard text link",
-      "style": "text",
-      "openInNewTab": true
-    },
-    {
-      "type": "link",
-      "url": "https://github.com/your-repo",
-      "text": "View on GitHub",
-      "style": "button",
-      "openInNewTab": true
-    },
-    {
-      "type": "header",
-      "level": 2,
-      "text": "Tabular Data"
+      "text": "ನಂದಿನಿ ಲೇಔಟ್‌ನಿಂದ ನಾಗಮಂಗಲಕ್ಕೆ"
     },
     {
       "type": "table",
-      "headers": ["Feature", "Supported", "Notes"],
+      "headers": ["Departure Time", "Session", "Origin", "Destination"],
       "rows": [
-        ["Headers", "Yes", "H1 through H6"],
-        ["Images", "Yes", "Requires public URL"],
-        ["Code Snippets", "Yes", "Supports multiple languages"]
+        ["08:15 AM", "Morning (ಬೆಳಿಗ್ಗೆ)", "Nandini Layout", "Nagamangala"],
+        ["10:15 AM", "Morning (ಬೆಳಿಗ್ಗೆ)", "Nandini Layout", "Nagamangala"],
+        ["01:00 PM", "Afternoon (ಮಧ್ಯಾಹ್ನ)", "Nandini Layout", "Nagamangala"],
+        ["04:15 PM", "Evening (ಸಂಜೆ)", "Nandini Layout", "Nagamangala"]
       ]
+    },
+    {
+      "type": "header",
+      "level": 2,
+      "text": "From Nagamangala to Nandini Layout"
+    },
+    {
+      "type": "text",
+      "text": "ನಾಗಮಂಗಲದಿಂದ ನಂದಿನಿ ಲೇಔಟ್‌ಗೆ"
+    },
+    {
+      "type": "table",
+      "headers": ["Departure Time", "Session", "Origin", "Destination"],
+      "rows": [
+        ["05:15 AM", "Morning (ಬೆಳಿಗ್ಗೆ)", "Nagamangala", "Nandini Layout"],
+        ["07:15 AM", "Morning (ಬೆಳಿಗ್ಗೆ)", "Nagamangala", "Nandini Layout"],
+        ["10:00 AM", "Morning (ಬೆಳಿಗ್ಗೆ)", "Nagamangala", "Nandini Layout"],
+        ["01:15 PM", "Afternoon (ಮಧ್ಯಾಹ್ನ)", "Nagamangala", "Nandini Layout"]
+      ]
+    },
+    {
+      "type": "header",
+      "level": 3,
+      "text": "Additional Information"
+    },
+    {
+      "type": "text",
+      "text": "Issued by the Divisional Controller, KSRTC Mandya Division (ಪ್ರಕಟಣೆ : ವಿಭಾಗೀಯ ನಿಯಂತ್ರಣಾಧಿಕಾರಿಗಳು, ಕೆ.ಎಸ್.ಆರ್.ಟಿ.ಸಿ. ಮಂಡ್ಯ ವಿಭಾಗ)."
     }
   ]
 }
