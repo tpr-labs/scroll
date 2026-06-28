@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper.json Editor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .block-card { transition: all 0.2s; }
+        .block-card:hover { border-color: #3b82f6; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 sm:p-8 font-sans text-gray-800">
+
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- LEFT COLUMN: BUILDER UI -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h1 class="text-2xl font-bold mb-6 text-gray-900 border-b pb-4">📝 Block Builder</h1>
+            
+            <!-- Page Meta -->
+            <div class="mb-8 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <h2 class="font-semibold mb-3 text-sm uppercase text-gray-500">Page Settings</h2>
+                <div class="space-y-3">
+                    <input type="text" id="meta-title" placeholder="Page Title" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" value="Family Hub">
+                    <input type="color" id="meta-color" class="w-full h-10 border rounded cursor-pointer" value="#2563eb">
+                </div>
+            </div>
+
+            <!-- Block Controls -->
+            <div class="mb-6 flex flex-wrap gap-2">
+                <button onclick="addBlock('header')" class="px-3 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm font-medium">+ Header</button>
+                <button onclick="addBlock('text')" class="px-3 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm font-medium">+ Text</button>
+                <button onclick="addBlock('image')" class="px-3 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm font-medium">+ Image</button>
+                <button onclick="addBlock('link')" class="px-3 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm font-medium">+ Link</button>
+                <button onclick="addBlock('table')" class="px-3 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm font-medium">+ Table</button>
+            </div>
+
+            <!-- Blocks Container -->
+            <div id="blocks-container" class="space-y-4">
+                <!-- Dynamic form fields will appear here -->
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: JSON OUTPUT -->
+        <div class="bg-gray-900 rounded-xl shadow-lg flex flex-col h-[calc(100vh-4rem)] sticky top-8">
+            <div class="flex items-center justify-between p-4 border-b border-gray-700">
+                <h2 class="text-white font-bold tracking-wide">data.json</h2>
+                <button onclick="copyJson()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded text-sm font-medium transition-colors">
+                    Copy to Clipboard
+                </button>
+            </div>
+            <div class="p-4 flex-grow overflow-auto">
+                <pre><code id="json-output" class="text-green-400 text-sm font-mono whitespace-pre-wrap"></code></pre>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let blocksData = [];
+
+        // Update JSON preview whenever anything changes
+        function updateOutput() {
+            const output = {
+                pageMeta: {
+                    title: document.getElementById('meta-title').value,
+                    themeColor: document.getElementById('meta-color').value
+                },
+                blocks: blocksData
+            };
+            document.getElementById('json-output').textContent = JSON.stringify(output, null, 2);
+        }
+
+        // Add Event Listeners to static meta fields
+        document.getElementById('meta-title').addEventListener('input', updateOutput);
+        document.getElementById('meta-color').addEventListener('input', updateOutput);
+
+        function removeBlock(index) {
+            blocksData.splice(index, 1);
+            renderForm();
+        }
+
+        function updateBlockData(index, field, value) {
+            blocksData[index][field] = value;
+            updateOutput();
+        }
+
+        // Table specific functions
+        function updateTableHeaders(index, commaString) {
+            blocksData[index].headers = commaString.split(',').map(s => s.trim());
+            updateOutput();
+        }
+        function updateTableRows(index, newlineString) {
+            const rows = newlineString.split('\n').filter(r => r.trim() !== '');
+            blocksData[index].rows = rows.map(row => row.split(',').map(s => s.trim()));
+            updateOutput();
+        }
+
+        function addBlock(type) {
+            const baseBlock = { type: type };
+            if (type === 'header') { baseBlock.level = 2; baseBlock.text = ''; }
+            if (type === 'text') { baseBlock.text = ''; }
+            if (type === 'image') { baseBlock.url = ''; baseBlock.caption = ''; }
+            if (type === 'link') { baseBlock.text = ''; baseBlock.url = ''; baseBlock.style = 'text'; baseBlock.openInNewTab = true; }
+            if (type === 'table') { baseBlock.headers = ['Col 1', 'Col 2']; baseBlock.rows = [['Data 1', 'Data 2']]; }
+            
+            blocksData.push(baseBlock);
+            renderForm();
+        }
+
+        function renderForm() {
+            const container = document.getElementById('blocks-container');
+            container.innerHTML = '';
+
+            blocksData.forEach((block, index) => {
+                const el = document.createElement('div');
+                el.className = 'block-card bg-white border border-gray-200 p-4 rounded shadow-sm relative';
+                
+                const header = document.createElement('div');
+                header.className = 'flex justify-between items-center mb-3 border-b pb-2';
+                header.innerHTML = `<span class="font-bold text-gray-700 uppercase text-xs tracking-wider">${block.type} Block</span>
+                                    <button onclick="removeBlock(${index})" class="text-red-500 hover:text-red-700 text-sm font-bold">✕ Remove</button>`;
+                el.appendChild(header);
+
+                if (block.type === 'header') {
+                    el.innerHTML += `
+                        <select onchange="updateBlockData(${index}, 'level', parseInt(this.value))" class="w-full mb-2 p-2 border rounded text-sm">
+                            <option value="1" ${block.level === 1 ? 'selected' : ''}>H1 (Main Title)</option>
+                            <option value="2" ${block.level === 2 ? 'selected' : ''}>H2 (Section)</option>
+                            <option value="3" ${block.level === 3 ? 'selected' : ''}>H3 (Sub-section)</option>
+                        </select>
+                        <input type="text" placeholder="Header Text" value="${block.text}" oninput="updateBlockData(${index}, 'text', this.value)" class="w-full p-2 border rounded outline-none focus:border-blue-500">
+                    `;
+                }
+
+                if (block.type === 'text') {
+                    el.innerHTML += `<textarea placeholder="Write your paragraph here..." oninput="updateBlockData(${index}, 'text', this.value)" class="w-full p-2 border rounded outline-none focus:border-blue-500 h-24">${block.text}</textarea>`;
+                }
+
+                if (block.type === 'image') {
+                    el.innerHTML += `
+                        <input type="text" placeholder="Image URL (https://...)" value="${block.url}" oninput="updateBlockData(${index}, 'url', this.value)" class="w-full mb-2 p-2 border rounded outline-none focus:border-blue-500">
+                        <input type="text" placeholder="Caption (Optional)" value="${block.caption || ''}" oninput="updateBlockData(${index}, 'caption', this.value)" class="w-full p-2 border rounded outline-none focus:border-blue-500">
+                    `;
+                }
+
+                if (block.type === 'link') {
+                    el.innerHTML += `
+                        <div class="grid grid-cols-2 gap-2 mb-2">
+                            <input type="text" placeholder="Link Text" value="${block.text}" oninput="updateBlockData(${index}, 'text', this.value)" class="w-full p-2 border rounded outline-none focus:border-blue-500">
+                            <input type="text" placeholder="URL (https://...)" value="${block.url}" oninput="updateBlockData(${index}, 'url', this.value)" class="w-full p-2 border rounded outline-none focus:border-blue-500">
+                        </div>
+                        <select onchange="updateBlockData(${index}, 'style', this.value)" class="w-full p-2 border rounded text-sm">
+                            <option value="text" ${block.style === 'text' ? 'selected' : ''}>Standard Text Link</option>
+                            <option value="button" ${block.style === 'button' ? 'selected' : ''}>Prominent Button</option>
+                        </select>
+                    `;
+                }
+
+                if (block.type === 'table') {
+                    const headersStr = block.headers.join(', ');
+                    const rowsStr = block.rows.map(r => r.join(', ')).join('\n');
+                    el.innerHTML += `
+                        <label class="text-xs text-gray-500 mb-1 block">Headers (comma separated)</label>
+                        <input type="text" placeholder="e.g. Time, Destination, Status" value="${headersStr}" oninput="updateTableHeaders(${index}, this.value)" class="w-full mb-3 p-2 border rounded outline-none focus:border-blue-500 text-sm">
+                        
+                        <label class="text-xs text-gray-500 mb-1 block">Rows (comma separated, one row per line)</label>
+                        <textarea placeholder="10:00 AM, City Center, On Time\n11:30 AM, North Station, Delayed" oninput="updateTableRows(${index}, this.value)" class="w-full p-2 border rounded outline-none focus:border-blue-500 h-32 whitespace-pre text-sm font-mono leading-relaxed">${rowsStr}</textarea>
+                    `;
+                }
+
+                container.appendChild(el);
+            });
+
+            updateOutput();
+        }
+
+        async function copyJson() {
+            const code = document.getElementById('json-output').textContent;
+            try {
+                // We use standard clipboard API if available, fallback to execCommand due to iframe restrictions
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(code);
+                } else {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = code;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand("copy");
+                    textArea.remove();
+                }
+                alert("JSON Copied! You can now paste this into GitHub.");
+            } catch (err) {
+                console.error('Failed to copy', err);
+                alert("Failed to copy automatically. Please select the code and copy manually.");
+            }
+        }
+
+        // ==========================================
+        // INITIALIZATION & DATA LOADING
+        // ==========================================
+        function getJsonFilename() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('page')) return `${urlParams.get('page')}.json`;
+            if (window.location.hash && window.location.hash.length > 1) {
+                return `${window.location.hash.substring(1)}.json`;
+            }
+            return 'data.json';
+        }
+
+        async function init() {
+            const targetFile = getJsonFilename();
+            // Update the UI header to show which file we are editing
+            document.querySelector('.text-white.font-bold.tracking-wide').textContent = targetFile;
+
+            try {
+                const response = await fetch(targetFile);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
+                const data = await response.json();
+                
+                // Populate Meta Data
+                if (data.pageMeta) {
+                    if (data.pageMeta.title) document.getElementById('meta-title').value = data.pageMeta.title;
+                    if (data.pageMeta.themeColor) document.getElementById('meta-color').value = data.pageMeta.themeColor;
+                }
+                
+                // Populate Blocks Array
+                if (data.blocks && Array.isArray(data.blocks)) {
+                    blocksData = data.blocks;
+                }
+                
+                // Render the populated form
+                renderForm();
+            } catch (error) {
+                console.warn("Starting with a blank canvas. Could not load:", error);
+                // Initialize empty state if fetch fails (e.g. running locally without a server)
+                updateOutput();
+            }
+        }
+
+        // Boot up the editor
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
