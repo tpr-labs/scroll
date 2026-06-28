@@ -1,7 +1,6 @@
 {
   "pageMeta": {
     "title": "KSRTC Bus Schedule: Nandini Layout ⇄ Nagamangala",
-    "description": "Official bus timings for the Nandini Layout and Nagamangala route.",
     "themeColor": "#dc2626"
   },
   "blocks": [
@@ -31,12 +30,27 @@
     },
     {
       "type": "table",
-      "headers": ["Departure Time", "Session", "Origin", "Destination"],
+      "headers": [
+        "Departure Time",
+        "Session"
+      ],
       "rows": [
-        ["08:15 AM", "Morning (ಬೆಳಿಗ್ಗೆ)", "Nandini Layout", "Nagamangala"],
-        ["10:15 AM", "Morning (ಬೆಳಿಗ್ಗೆ)", "Nandini Layout", "Nagamangala"],
-        ["01:00 PM", "Afternoon (ಮಧ್ಯಾಹ್ನ)", "Nandini Layout", "Nagamangala"],
-        ["04:15 PM", "Evening (ಸಂಜೆ)", "Nandini Layout", "Nagamangala"]
+        [
+          "08:15 AM",
+          "Morning (ಬೆಳಿಗ್ಗೆ)"
+        ],
+        [
+          "10:15 AM",
+          "Morning (ಬೆಳಿಗ್ಗೆ)"
+        ],
+        [
+          "01:00 PM",
+          "Afternoon (ಮಧ್ಯಾಹ್ನ)"
+        ],
+        [
+          "04:15 PM",
+          "Evening (ಸಂಜೆ)"
+        ]
       ]
     },
     {
@@ -50,12 +64,27 @@
     },
     {
       "type": "table",
-      "headers": ["Departure Time", "Session", "Origin", "Destination"],
+      "headers": [
+        "Departure Time",
+        "Session"
+      ],
       "rows": [
-        ["05:15 AM", "Morning (ಬೆಳಿಗ್ಗೆ)", "Nagamangala", "Nandini Layout"],
-        ["07:15 AM", "Morning (ಬೆಳಿಗ್ಗೆ)", "Nagamangala", "Nandini Layout"],
-        ["10:00 AM", "Morning (ಬೆಳಿಗ್ಗೆ)", "Nagamangala", "Nandini Layout"],
-        ["01:15 PM", "Afternoon (ಮಧ್ಯಾಹ್ನ)", "Nagamangala", "Nandini Layout"]
+        [
+          "05:15 AM",
+          "Morning (ಬೆಳಿಗ್ಗೆ)"
+        ],
+        [
+          "07:15 AM",
+          "Morning (ಬೆಳಿಗ್ಗೆ)"
+        ],
+        [
+          "10:00 AM",
+          "Morning (ಬೆಳಿಗ್ಗೆ)"
+        ],
+        [
+          "01:15 PM",
+          "Afternoon (ಮಧ್ಯಾಹ್ನ)"
+        ]
       ]
     },
     {
